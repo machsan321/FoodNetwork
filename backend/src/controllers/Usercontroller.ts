@@ -29,13 +29,7 @@ class UserController implements IControllerBase {
 
   register = async (req: Request, res: Response) => {
     const data = await this.userBL.register(req.body as UserRegisterInput
-      // new UserRegisterInput(
-      //   req.body.email,
-      //   req.body.password,
-      //   req.body.firstName,
-      //   req.body.lastName,
-      //   req.body.username
-      // )
+    
     );
     return res.status(201).json({ data });
   };
