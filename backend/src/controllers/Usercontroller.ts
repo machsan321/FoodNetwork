@@ -3,9 +3,8 @@ import { Request, Response } from "express";
 import IControllerBase from "./interfaces/IControllerBase";
 import UserBL from "../BL/UserBL";
 import { UserLoginInput } from "../common/entityBL/user/UserLoginInput";
-import { UserLoginResponse } from "../common/entityBL/user/UserLoginResponse";
 import { UserRegisterInput } from "../common/entityBL/user/UserRegisterInput";
-import { UserRegisterResponse } from "../common/entityBL/user/UserRegisterResponse";
+
 
 class UserController implements IControllerBase {
   public path = "/";
@@ -23,26 +22,20 @@ class UserController implements IControllerBase {
   }
 
   login = async (req: Request, res: Response) => {
-    try {
-      let data = await this.userBL.login(
-        new UserLoginInput(req.body.email, req.body.password)
-      );
-      console.log(data);
-      return res.status(200).json({ data });
-    } catch (e) {
-      return res.status(400).json({ e });
-    }
-  };
+    const data = await this.userBL.login(new UserLoginInput(req.body.email, req.body.password));
+   
+    return res.status(200).json({ data });
+  }
 
   register = async (req: Request, res: Response) => {
-    const data = await this.userBL.register(
-      new UserRegisterInput(
-        req.body.email,
-        req.body.password,
-        req.body.firstName,
-        req.body.lastName,
-        req.body.username
-      )
+    const data = await this.userBL.register(req.body as UserRegisterInput
+      // new UserRegisterInput(
+      //   req.body.email,
+      //   req.body.password,
+      //   req.body.firstName,
+      //   req.body.lastName,
+      //   req.body.username
+      // )
     );
     return res.status(201).json({ data });
   };

@@ -8,43 +8,42 @@ import bcrypt from "bcrypt";
 const jwt = require("jsonwebtoken");
 
 export class UserDAL {
-  public async login(data: UserLoginInput): Promise <Result<UserLoginResponse>> {
+  public async login(data: UserLoginInput): Promise<Result<UserLoginResponse>> {
     let email = data.email;
 
-    var res = new Result<UserLoginResponse>(
+    var res = new Result<UserLoginResponse>(              
       new UserLoginResponse("", "", ""),
       "",
       "",
-      false
+      false,
     );
-
-    User.findOne({ email }).exec((error: any, user: any) => {
-      if (error) {
+    try {   
+      const user = await User.findOne({ email }).exec();
+      if(user === null){
         res.isSuccses = false;
-        res.error = error;
-        console.log("test1")
+        res.error = "you need to singup";
         return res;
-      } else if (user) {
-                console.log("test2");
+      }
+      {
         if (this.authenticate(data.password)) {
           const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET, {
             expiresIn: "1h",
           });
-          
           const { firstName, lastName } = user;
           res.data.firstName = firstName;
           res.data.lastName = lastName;
           res.data.token = token;
           res.isSuccses = true;
-          console.log(res);
+         
           return res;
         }
       }
-              console.log("test3");
+    } catch (err) {
+      
       res.isSuccses = false;
-      res.error = "Invalid password";
+      res.error = err;
       return res;
-    });
+    }
     return res;
   }
 
@@ -57,23 +56,32 @@ export class UserDAL {
     return bcrypt.hashSync(password, 10);
   }
 
-  public async register(data: UserRegisterInput): Promise <Result<UserRegisterResponse>> {
-    let email = data.email;
+  public async register(data: UserRegisterInput,): Promise<Result<UserRegisterResponse>> {
+
+    let userEmail = data.email;
+    let userName= data.username;
     var res = new Result<UserRegisterResponse>(
       new UserRegisterResponse("", "", ""),
       "",
       "",
-      false
+      false,
     );
 
-    User.findOne({ email }).exec((error: any, user: any) => {
-      if (user) {
+    try {
+   
+      let user = await User.findOne({  $or: [
+        {email: userEmail}
+        ,{username:userName} 
+      ] }).exec();
+     
+      if(user.length !=0){
         res.isSuccses = false;
         res.error = "User is already exist";
+        return res;
       }
-
+      
+      
       const { firstName, lastName, email, password, username } = data;
-
       let _user = new User({
         firstName,
         lastName,
@@ -82,16 +90,21 @@ export class UserDAL {
         hash_password: this.createHashedPassword(password),
         role: "admin",
       });
+     
+      try {
+        let saveUser = await _user.save();
+        res.isSuccses = true;
+        res.error = "User is save succsesfuly";
+       
+      }
+      catch (error) {
+        console.log("error",error);
+      }
 
-      _user.save((error, data) => {
-        if (error) {
-        }
-
-        if (data) {
-        }
-      });
-    });
-
+    } catch (err) {
+      res.isSuccses = false;
+      res.error = "User is already exist";
+    }
     return res;
   }
 }

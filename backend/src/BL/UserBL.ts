@@ -12,11 +12,11 @@ export default class UserBL {
     this.userDal = new UserDAL();
   }
 
-  public async login(data: UserLoginInput): Promise<Result<UserLoginResponse>> {
+  public async login(data: UserLoginInput):Promise< Result<UserLoginResponse>> {
     return await this.userDal.login(data);
   }
   public async register(data: UserRegisterInput): Promise<Result<UserRegisterResponse>> {
-    return await this.userDal.register(data);
+    console.log("data ",data);
+     return await this.userDal.register(data);
   }
-  
 }

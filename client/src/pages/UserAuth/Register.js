@@ -61,7 +61,7 @@ export default function Register() {
                     variant="outlined"
                     
                     fullWidth
-                    label="שם פרטי"
+                    label="firs Name"
                     name="firstName"             
                   />
 
@@ -71,7 +71,7 @@ export default function Register() {
                     variant="outlined"
                     
                     fullWidth
-                    label="שם משפחה"
+                    label="Last Name"
                     name="lastName"
                  
                   />
@@ -81,7 +81,7 @@ export default function Register() {
                     variant="outlined"
                     
                     fullWidth
-                    label="שם משתנה"
+                    label="user name"
                     name="username"
                    
                   />
@@ -91,7 +91,7 @@ export default function Register() {
                     variant="outlined"
                     
                     fullWidth
-                    label="כתובת מייל"
+                    label="Email Address"
                     name="email"
                    
                   />
@@ -102,7 +102,7 @@ export default function Register() {
                     
                     fullWidth
                     name="password"
-                    label="סיסמה"
+                    label="Password"
                     type="password"
                    
                   />
