@@ -1,4 +1,4 @@
-export interface Iingredient {
+export default interface Iingredient {
     name: string;
     cal: number;
     amountKg: number;

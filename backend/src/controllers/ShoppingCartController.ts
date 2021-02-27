@@ -2,6 +2,7 @@ import * as express from "express";
 import { Request, Response } from "express";
 import IControllerBase from "./interfaces/IControllerBase";
 
+
 class ShoppingController implements IControllerBase {
   public path = "/";
   public router = express.Router();
@@ -11,21 +12,17 @@ class ShoppingController implements IControllerBase {
   }
 
   public initRoutes() {
-    this.router.post("user/login", this.login);
+    this.router.get("cart/getCart", this.getCart);
+    this.router.post("cart/updateCart", this.updateCart);
   }
 
-  login = async (req: Request, res: Response) => {
-    const { username, password } = req?.body;
-    if (
-      !username ||
-      !password ||
-      typeof password !== "string" ||
-      typeof username !== "string"
-    ) {
-      res.send("Username or password is not valid data.");
-      return;
-    }
+  getCart = async (req: Request, res: Response) => {
+    
   };
+
+  updateCart = async (req: Request, res: Response) => {
+
+  }
 }
 
 export default ShoppingController;

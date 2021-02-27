@@ -8,9 +8,15 @@ const ingredientScehma = new mongoose.Schema({
   },
   calKg: {
     type: Number,
+    trim: true
   },
   calnumItems: {
     type: Number,
+    trim: true
+  },
+  amount: {
+    type: Number,
+    trim: true
   },
 });
 

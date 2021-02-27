@@ -1,17 +1,19 @@
 import mongoose, { Schema } from 'mongoose';
+import FoodIngredients from './FoodIngredient';
+import Iingredient from "../interfaces/Iingredient";
 
 const cartSchema = new mongoose.Schema({
-    username: {
-        type: String,
-        unique: true,
-        required: true
-    },
-    ShoppingCartIngredients: {
-        type: Schema.Types.Mixed
-    },
-    ExistingIngredients: {
-        type: Schema.Types.Mixed
-    }
+  email: {
+    type: String,
+    unique: true,
+    required: true,
+  },
+  ShoppingCartIngredients: {
+    type: [FoodIngredients],
+  },
+  ExistingIngredients: {
+    type: [FoodIngredients],
+  },
 });
 
 export default mongoose.model("cart", cartSchema);
