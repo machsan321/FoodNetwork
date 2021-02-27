@@ -1,6 +1,6 @@
 import mongoose, { Schema } from 'mongoose';
 import FoodIngredients from './FoodIngredient';
-import Iingredient from "../interfaces/Iingredient";
+import Iingredient from "../../common/interfaces/Iingredient";
 
 const cartSchema = new mongoose.Schema({
   email: {
