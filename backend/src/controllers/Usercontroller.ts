@@ -28,9 +28,7 @@ class UserController implements IControllerBase {
   }
 
   register = async (req: Request, res: Response) => {
-    const data = await this.userBL.register(req.body as UserRegisterInput
-    
-    );
+    const data = await this.userBL.register(req.body as UserRegisterInput);
     return res.status(201).json({ data });
   };
 }

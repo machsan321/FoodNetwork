@@ -9,11 +9,11 @@ const cartSchema = new mongoose.Schema({
     required: true,
   },
   ShoppingCartIngredients: {
-    type: [FoodIngredients],
+    type: Array<Iingredient>(),
   },
   ExistingIngredients: {
-    type: [FoodIngredients],
+    type: Array<Iingredient>(),
   },
 });
 
-export default mongoose.model("cart", cartSchema);
+export default mongoose.model("carts", cartSchema);

@@ -11,7 +11,7 @@ const PORT = process.env.PORT;
 const app = new App({
   port: Number(process.env.PORT),
   controllers: [new UserController(),
-                new ShoppingController],
+                new ShoppingController()],
   middleWares: [
     bodyParser.json(),
     bodyParser.urlencoded({ extended: true }),
