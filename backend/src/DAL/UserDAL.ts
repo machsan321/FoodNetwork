@@ -5,23 +5,22 @@ import { UserLoginInput } from "../common/entityBL/user/UserLoginInput";
 import { UserRegisterResponse } from "../common/entityBL/user/UserRegisterResponse";
 import { UserRegisterInput } from "../common/entityBL/user/UserRegisterInput";
 import bcrypt from "bcrypt";
+import { ResponseCreatior } from "../common/response/./ResponseCreatior";
 const jwt = require("jsonwebtoken");
 
 export class UserDAL {
   public async login(data: UserLoginInput): Promise<Result<UserLoginResponse>> {
     let email = data.email;
 
-    var res = new Result<UserLoginResponse>(
-      new UserLoginResponse("", "", ""),
-      "",
-      "",
-      false
-    );
+    let res = ResponseCreatior.CreateErrorResponse<UserLoginResponse>("");
+
     try {
       const user = await User.findOne({ email }).exec();
       if (user === null) {
-        res.isSuccses = false;
-        res.error = "you need to singup";
+        res = ResponseCreatior.CreateErrorResponse<UserLoginResponse>(
+          "you need to singup",
+        );
+
         return res;
       }
       {
@@ -30,17 +29,15 @@ export class UserDAL {
             expiresIn: "1h",
           });
           const { firstName, lastName } = user;
-          res.data.firstName = firstName;
-          res.data.lastName = lastName;
-          res.data.token = token;
-          res.isSuccses = true;
+          res = ResponseCreatior.CreateSuccsesResponse<UserLoginResponse>(
+            new UserLoginResponse(token, firstName, lastName),
+          );
 
           return res;
         }
       }
     } catch (err) {
-      res.isSuccses = false;
-      res.error = err;
+      res = ResponseCreatior.CreateErrorResponse<UserLoginResponse>(err);
       return res;
     }
     return res;
@@ -56,7 +53,7 @@ export class UserDAL {
   }
 
   public async register(
-    data: UserRegisterInput
+    data: UserRegisterInput,
   ): Promise<Result<UserRegisterResponse>> {
     let userEmail = data.email;
     let userName = data.username;
@@ -64,7 +61,7 @@ export class UserDAL {
       new UserRegisterResponse("", "", ""),
       "",
       "",
-      false
+      false,
     );
 
     try {
