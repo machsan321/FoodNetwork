@@ -8,10 +8,11 @@ import { sendEmail } from "../common/helpers/nodemailer";
 import { UserVerificationResponse } from "../common/entityBL/user/UserVerificationResponse";
 import bcrypt from "bcrypt";
 import { ResponseCreatior } from "../common/response/./ResponseCreatior";
+import { Result2 } from "../common/response/Response";
 const jwt = require("jsonwebtoken");
 
 export class UserDAL {
-  public async login(data: UserLoginInput): Promise<Result<UserLoginResponse>> {
+  public async login(data: UserLoginInput): Promise<Result2<UserLoginResponse>> {
     let email = data.email;
 
     let res = ResponseCreatior.CreateErrorResponse<UserLoginResponse>("");
@@ -31,10 +32,10 @@ export class UserDAL {
       if (this.authenticate(data.password)) {
         const token = jwt.sign({ email }, process.env.JWT_SECRET);
         const { firstName, lastName } = user;
-        res.data.firstName = firstName;
-        res.data.lastName = lastName;
-        res.data.token = token;
-        res.isSuccses = true;
+        res = ResponseCreatior.CreateSuccsesResponse<UserLoginResponse>(new UserLoginResponse(
+          token,firstName,lastName
+        ));
+       
 
         return res;
       }

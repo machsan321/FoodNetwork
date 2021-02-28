@@ -1,8 +1,9 @@
 import { Result } from "./IResultT";
+import { Result2 } from "./Response";
 
  export class  ResponseCreatior{
     static CreateSuccsesResponse<T>(data:any){
-        const res : Response2<T> = {
+        const res : Result2<T> = {
             data: data,
             message: "",
             error: "",
@@ -12,7 +13,7 @@ import { Result } from "./IResultT";
 
     }
        static CreateErrorResponse<T>(error:string){
-        const res : Result<T> = {
+        const res : Result2<T> = {
           
             message: "",
             error: error,
