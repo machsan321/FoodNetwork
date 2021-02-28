@@ -4,6 +4,7 @@ import { UserLoginResponse } from "../common/entityBL/user/UserLoginResponse";
 import { UserLoginInput } from "../common/entityBL/user/UserLoginInput";
 import { UserRegisterResponse } from "../common/entityBL/user/UserRegisterResponse";
 import { UserRegisterInput } from "../common/entityBL/user/UserRegisterInput";
+import { sendEmail } from '../common/helpers/nodemailer';
 import bcrypt from "bcrypt";
 const jwt = require("jsonwebtoken");
 
@@ -24,19 +25,18 @@ export class UserDAL {
         res.error = "you need to singup";
         return res;
       }
-      {
-        if (this.authenticate(data.password)) {
-          const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET, {
-            expiresIn: "1h",
-          });
-          const { firstName, lastName } = user;
-          res.data.firstName = firstName;
-          res.data.lastName = lastName;
-          res.data.token = token;
-          res.isSuccses = true;
+      if (!user.email_confirmed) {
+        throw new Error("Please confirm your email")
+      }
+      if (this.authenticate(data.password)) {
+        const token = jwt.sign({ email }, process.env.JWT_SECRET);
+        const { firstName, lastName } = user;
+        res.data.firstName = firstName;
+        res.data.lastName = lastName;
+        res.data.token = token;
+        res.isSuccses = true;
 
-          return res;
-        }
+        return res;
       }
     } catch (err) {
       res.isSuccses = false;
@@ -58,8 +58,6 @@ export class UserDAL {
   public async register(
     data: UserRegisterInput
   ): Promise<Result<UserRegisterResponse>> {
-    let userEmail = data.email;
-    let userName = data.username;
     var res = new Result<UserRegisterResponse>(
       new UserRegisterResponse("", "", ""),
       "",
@@ -68,15 +66,16 @@ export class UserDAL {
     );
 
     try {
-      let user = await User.findOne({
-        $or: [{ email: userEmail }, { username: userName }],
-      }).exec();
-
-      if (user.length != 0) {
+      let user = await User.findOne({ email: data.email }).exec();
+      console.log(user)
+      if (user != null) {
         res.isSuccses = false;
         res.error = "User is already exist";
         return res;
       }
+
+      const token = jwt.sign({ email: data.email }, process.env.JWT_SECRET);
+      sendEmail(data.email, token);
 
       const { firstName, lastName, email, password, username } = data;
       let _user = new User({
@@ -90,6 +89,7 @@ export class UserDAL {
 
       try {
         let saveUser = await _user.save();
+        res.data.token = token;
         res.isSuccses = true;
         res.error = "User is save succsesfuly";
       } catch (error) {

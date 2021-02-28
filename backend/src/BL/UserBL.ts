@@ -16,7 +16,6 @@ export default class UserBL {
     return await this.userDal.login(data);
   }
   public async register(data: UserRegisterInput): Promise<Result<UserRegisterResponse>> {
-    console.log("data ",data);
      return await this.userDal.register(data);
   }
 }

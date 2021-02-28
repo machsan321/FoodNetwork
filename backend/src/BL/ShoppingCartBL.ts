@@ -12,7 +12,6 @@ export default class ShoppingCartBL {
 
     public async getCart(data:any): Promise<Result<IngredientListResponse>> {
         let x = await this.shoppingCartDal.getCart(data);
-        console.log("xxxxxx", x);
         return x;
     }
 

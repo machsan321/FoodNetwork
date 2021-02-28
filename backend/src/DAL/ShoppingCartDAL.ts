@@ -14,20 +14,16 @@ export class ShoppingCartDAL {
 
     try {
       const cart = await ShoppingCart.findOne({ email: _email });
-      console.log(_email)
       if (cart !== null) {
-        console.log("not null")
         res.data = new IngredientListResponse(cart.ShoppingCartIngredients);
         res.isSuccses = true;
         return res;
       } else {
-        console.log("null")
         res.error = "Cart Doesn't found";
         res.isSuccses = false;
         return res;
       }
     } catch (e) {
-      console.log("error")
       console.error(e);
       return res;
     }
