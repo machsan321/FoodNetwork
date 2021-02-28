@@ -17,7 +17,7 @@ export function sendEmail(email_add: string, token: string) {
     from: process.env.GMAIL_ADD,
     to: email_add,
     subject: "FoodNetwork Confirmation Email",
-    text: `http://localhost:${process.env.PORT}/confirmation/${token}`
+    text: `http://localhost:${process.env.PORT}/user/confirmation/${token}`
   };
 
   transporter.sendMail(mailOptions, function (error: any, info: any) {

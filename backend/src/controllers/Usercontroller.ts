@@ -19,7 +19,7 @@ class UserController implements IControllerBase {
   public initRoutes() {
     this.router.post("/user/register", this.register);
     this.router.post("/user/login", this.login);
-    this.router.post("/user/confirmation", this.emailConfirmation)
+    this.router.get("/user/confirmation/:token", this.emailConfirmation);
   }
 
   login = async (req: Request, res: Response) => {
@@ -34,7 +34,7 @@ class UserController implements IControllerBase {
   };
 
   emailConfirmation = async (req: Request, res: Response) => {
-    
+    const confirmation = await this.userBL.emailConfirmation(req.params.token)
   }
 }
 

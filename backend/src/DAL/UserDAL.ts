@@ -4,7 +4,8 @@ import { UserLoginResponse } from "../common/entityBL/user/UserLoginResponse";
 import { UserLoginInput } from "../common/entityBL/user/UserLoginInput";
 import { UserRegisterResponse } from "../common/entityBL/user/UserRegisterResponse";
 import { UserRegisterInput } from "../common/entityBL/user/UserRegisterInput";
-import { sendEmail } from '../common/helpers/nodemailer';
+import { sendEmail } from "../common/helpers/nodemailer";
+import { UserVerificationResponse } from "../common/entityBL/user/UserVerificationResponse";
 import bcrypt from "bcrypt";
 const jwt = require("jsonwebtoken");
 
@@ -26,7 +27,7 @@ export class UserDAL {
         return res;
       }
       if (!user.email_confirmed) {
-        throw new Error("Please confirm your email")
+        throw new Error("Please confirm your email");
       }
       if (this.authenticate(data.password)) {
         const token = jwt.sign({ email }, process.env.JWT_SECRET);
@@ -46,19 +47,10 @@ export class UserDAL {
     return res;
   }
 
-  public authenticate(password: string): Promise<boolean> {
-    const hash_password = bcrypt.hashSync(password, 10);
-    return bcrypt.compare(password, hash_password);
-  }
-
-  public createHashedPassword(password: string): string {
-    return bcrypt.hashSync(password, 10);
-  }
-
   public async register(
     data: UserRegisterInput
   ): Promise<Result<UserRegisterResponse>> {
-    var res = new Result<UserRegisterResponse>(
+    let res = new Result<UserRegisterResponse>(
       new UserRegisterResponse("", "", ""),
       "",
       "",
@@ -67,7 +59,6 @@ export class UserDAL {
 
     try {
       let user = await User.findOne({ email: data.email }).exec();
-      console.log(user)
       if (user != null) {
         res.isSuccses = false;
         res.error = "User is already exist";
@@ -100,5 +91,54 @@ export class UserDAL {
       res.error = "User is already exist";
     }
     return res;
+  }
+
+  public async verifieUser(
+    token: string
+  ): Promise<Result<UserVerificationResponse>> {
+    let res = new Result<UserVerificationResponse>(
+      new UserVerificationResponse("", "", false),
+      "",
+      "",
+      false
+    );
+
+    let _jwt = jwt.decode(token, { complete: true });
+    try {
+      const user = await User.findOneAndUpdate(
+        { email: _jwt.payload.email },
+        { $set: { email_confirmed: true } },
+        { new: true },
+        (err, doc) => {
+          if (err) {
+            console.log(err);
+            res.isSuccses = true;
+            res.message = "Email is verified.";
+            res.data.isVerified = true;
+            res.data.message = " Email is verified";
+            return res;
+          } else {
+            console.log(doc);
+          }
+        }
+      );
+    } catch (e) {
+      res.error = `Email Verification Error: ${e}`;
+      res.isSuccses = false;
+      res.data.isVerified = false;
+      res.data.message = "Cant verifie user's email address."
+      return res;
+    }
+
+    return res;
+  }
+
+  public authenticate(password: string): Promise<boolean> {
+    const hash_password = bcrypt.hashSync(password, 10);
+    return bcrypt.compare(password, hash_password);
+  }
+
+  public createHashedPassword(password: string): string {
+    return bcrypt.hashSync(password, 10);
   }
 }
