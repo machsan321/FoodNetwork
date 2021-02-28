@@ -19,7 +19,6 @@ class ShoppingController implements IControllerBase {
   }
 
   getCart = async (req: Request, res: Response) => {
-    console.log("email", req.body.email);
     let data = await this.shoppingCartBL.getCart(req.body.email);
     return res.status(200).send(data);
   };
