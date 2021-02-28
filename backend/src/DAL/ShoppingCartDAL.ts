@@ -1,7 +1,7 @@
 import ShoppingCart from "./models/ShoppingCart";
 import Iingredient from "../common/interfaces/Iingredient";
 import { Result } from "../common/response/IResultT";
-import { IngredientListResponse } from "../common/entityBL/ingredients/IngredientListResponse";
+import { IngredientListResponse } from "../common/entityBL/ingredients/GetCartResponse";
 
 export class ShoppingCartDAL {
   public async getCart(_email: string): Promise<Result<IngredientListResponse>> {

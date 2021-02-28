@@ -1,5 +1,5 @@
 export class Result<T> {
-  data: T;
+  data?: T;
   message: string;
   error: string;
   isSuccses: boolean;
