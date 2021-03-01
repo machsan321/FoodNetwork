@@ -8,7 +8,7 @@ function App() {
   return (
     <div style={{ height: '100%'}} >
    <Register/>
-      
+      <Login/>
     </div>
   );
 }

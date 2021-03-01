@@ -1,5 +1,5 @@
 import User from "./models/UserSchema";
-import { Result } from "../common/response/IResultT";
+import { IResult, Result } from "../common/response/Result";
 import { UserLoginResponse } from "../common/entityBL/user/UserLoginResponse";
 import { UserLoginInput } from "../common/entityBL/user/UserLoginInput";
 import { UserRegisterResponse } from "../common/entityBL/user/UserRegisterResponse";
@@ -8,53 +8,37 @@ import { sendEmail } from "../common/helpers/nodemailer";
 import { UserVerificationResponse } from "../common/entityBL/user/UserVerificationResponse";
 import bcrypt from "bcrypt";
 import { ResponseCreatior } from "../common/response/./ResponseCreatior";
-import { Result2 } from "../common/response/Response";
+
+import { userData } from "../common/DTO/Services/DAL/Output/userData";
 const jwt = require("jsonwebtoken");
 
 export class UserDAL {
-  public async login(data: UserLoginInput): Promise<Result2<UserLoginResponse>> {
-    let email = data.email;
-
-    let res = ResponseCreatior.CreateErrorResponse<UserLoginResponse>("");
+  public async getUserByEmail(email :string): Promise<IResult<userData>> {
+   
+    let res = ResponseCreatior.CreateErrorResponse<userData>("");
 
     try {
       const user = await User.findOne({ email }).exec();
-      if (user === null) {
-        res = ResponseCreatior.CreateErrorResponse<UserLoginResponse>(
-          "you need to singup",
-        );
+
+      res = ResponseCreatior.CreateSuccsesResponse<userData>(
+        user
+      );
+
 
         return res;
       }
-      if (!user.email_confirmed) {
-        throw new Error("Please confirm your email");
-      }
-      if (this.authenticate(data.password)) {
-        const token = jwt.sign({ email }, process.env.JWT_SECRET);
-        const { firstName, lastName } = user;
-        res = ResponseCreatior.CreateSuccsesResponse<UserLoginResponse>(new UserLoginResponse(
-          token,firstName,lastName
-        ));
-       
-
-        return res;
-      }
-    } catch (err) {
-      res = ResponseCreatior.CreateErrorResponse<UserLoginResponse>(err);
+  
+    catch (err) {
+      res = ResponseCreatior.CreateErrorResponse<userData>(err);
       return res;
     }
     return res;
   }
 
-  public async register(
-    data: UserRegisterInput,
-  ): Promise<Result<UserRegisterResponse>> {
-    let res = new Result<UserRegisterResponse>(
-      new UserRegisterResponse("", "", ""),
-      "",
-      "",
-      false,
-    );
+  public async register(data: UserRegisterInput): Promise<IResult<UserRegisterResponse>> {
+    
+  
+    let res = new Result<UserRegisterResponse>(  new UserRegisterResponse("", "", ""),  "", "", false, );
 
     try {
       let user = await User.findOne({ email: data.email }).exec();
@@ -67,30 +51,36 @@ export class UserDAL {
       const token = jwt.sign({ email: data.email }, process.env.JWT_SECRET);
       sendEmail(data.email, token);
 
-      const { firstName, lastName, email, password, username } = data;
-      let _user = new User({
-        firstName,
-        lastName,
-        username,
-        email,
-        hash_password: this.createHashedPassword(password),
-        role: "admin",
-      });
-
-      try {
-        let saveUser = await _user.save();
-        res.data.token = token;
-        res.isSuccses = true;
-        res.error = "User is save succsesfuly";
-      } catch (error) {
-        console.log("error", error);
-      }
+     const regUser = await this.registerUser(data);
+   
     } catch (err) {
       res.isSuccses = false;
       res.error = "User is already exist";
     }
     return res;
   }
+  public async registerUser(data: UserRegisterInput): Promise<Result<boolean>>{
+    
+    const { firstName, lastName, email, password, username } = data;
+    let _user = new User({
+      firstName,
+      lastName,
+      username,
+      email,
+      hash_password: this.createHashedPassword(password),
+      role: "admin",
+    });
+
+    try {
+      let saveUser = await _user.save();
+      return ResponseCreatior.CreateSuccsesResponse<boolean>(true);
+    } catch (error) {
+      return ResponseCreatior.CreateErrorResponseData<boolean>(error,false);
+    }
+
+  } 
+
+
 
   public async verifieUser(
     token: string
@@ -110,11 +100,13 @@ export class UserDAL {
         { new: true },
         (err, doc) => {
           if (err) {
+            if(res.data!=null){
             console.log(err);
             res.isSuccses = true;
             res.message = "Email is verified.";
             res.data.isVerified = true;
             res.data.message = " Email is verified";
+            }
             return res;
           } else {
             console.log(doc);
@@ -122,10 +114,12 @@ export class UserDAL {
         }
       );
     } catch (e) {
+      if(res.data !=null){
       res.error = `Email Verification Error: ${e}`;
       res.isSuccses = false;
       res.data.isVerified = false;
       res.data.message = "Cant verifie user's email address."
+      }
       return res;
     }
 

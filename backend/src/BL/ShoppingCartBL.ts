@@ -1,7 +1,8 @@
 import { ShoppingCartDAL } from "../DAL/ShoppingCartDAL";
-import { Result } from "../common/response/IResultT";
+
 import { IngredientListResponse } from '../common/entityBL/ingredients/GetCartResponse';
 import { UserLoginInput } from "../common/entityBL/user/UserLoginInput";
+import { Result } from "../common/response/Result";
 
 export default class ShoppingCartBL {
     private shoppingCartDal: ShoppingCartDAL;

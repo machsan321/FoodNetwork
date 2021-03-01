@@ -1,6 +1,6 @@
 import ShoppingCart from "./models/ShoppingCart";
 import Iingredient from "../common/interfaces/Iingredient";
-import { Result } from "../common/response/IResultT";
+import { Result } from "../common/response/Result";
 import { IngredientListResponse } from "../common/entityBL/ingredients/GetCartResponse";
 
 export class ShoppingCartDAL {
