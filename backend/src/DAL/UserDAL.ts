@@ -12,53 +12,25 @@ import { ResponseCreatior } from "../common/response/./ResponseCreatior";
 import { userData } from "../common/DTO/Services/DAL/Output/userData";
 const jwt = require("jsonwebtoken");
 
+
 export class UserDAL {
+
   public async getUserByEmail(email :string): Promise<IResult<userData>> {
    
     let res = ResponseCreatior.CreateErrorResponse<userData>("");
-
     try {
       const user = await User.findOne({ email }).exec();
-
       res = ResponseCreatior.CreateSuccsesResponse<userData>(
         user
       );
-
-
         return res;
-      }
-  
+      }  
     catch (err) {
       res = ResponseCreatior.CreateErrorResponse<userData>(err);
       return res;
-    }
-    return res;
+    } 
   }
 
-  public async register(data: UserRegisterInput): Promise<IResult<UserRegisterResponse>> {
-    
-  
-    let res = new Result<UserRegisterResponse>(  new UserRegisterResponse("", "", ""),  "", "", false, );
-
-    try {
-      let user = await User.findOne({ email: data.email }).exec();
-      if (user != null) {
-        res.isSuccses = false;
-        res.error = "User is already exist";
-        return res;
-      }
-
-      const token = jwt.sign({ email: data.email }, process.env.JWT_SECRET);
-      sendEmail(data.email, token);
-
-     const regUser = await this.registerUser(data);
-   
-    } catch (err) {
-      res.isSuccses = false;
-      res.error = "User is already exist";
-    }
-    return res;
-  }
   public async registerUser(data: UserRegisterInput): Promise<Result<boolean>>{
     
     const { firstName, lastName, email, password, username } = data;
@@ -124,11 +96,6 @@ export class UserDAL {
     }
 
     return res;
-  }
-
-  public authenticate(password: string): Promise<boolean> {
-    const hash_password = bcrypt.hashSync(password, 10);
-    return bcrypt.compare(password, hash_password);
   }
 
   public createHashedPassword(password: string): string {

@@ -10,6 +10,7 @@ import { ResponseCreatior } from "../common/response/ResponseCreatior";
 import { userData } from "../common/DTO/Services/DAL/Output/userData";
 import bcrypt from "bcrypt";
 const jwt = require("jsonwebtoken");
+import { sendEmail } from "../common/helpers/nodemailer";
 export default class UserBL {
   private userDal: UserDAL;
 
@@ -21,31 +22,26 @@ export default class UserBL {
     data: UserLoginInput,
   ): Promise<IResult<UserLoginResponse>> {
     let userResponse = await this.userDal.getUserByEmail(data.email);
-    let CreateErrorResponse = ResponseCreatior.CreateErrorResponse<UserLoginResponse>(
+    let ErrorResponse = ResponseCreatior.CreateErrorResponse<UserLoginResponse>(
       "",
     );
     if (!userResponse.isSuccses) {
-      return ResponseCreatior.CreateErrorResponse<UserLoginResponse>(
-        userResponse.error,
-      );
+      ErrorResponse.error = userResponse.error;
+      return ErrorResponse;
     }
     if (userResponse.data === null) {
-      return ResponseCreatior.CreateErrorResponse<UserLoginResponse>(
-        "you need to singup",
-      );
+      ErrorResponse.error = "you need to singup";
+      return ErrorResponse;
     }
-
     if (!userResponse.data.email_confirmed) {
-      return ResponseCreatior.CreateErrorResponse<UserLoginResponse>(
-        "Please confirm your email",
-      );
+      ErrorResponse.error = "Please confirm your email";
+      return ErrorResponse;
+    }
+    if (!this.isValidPassword(data.password, userResponse.data.hash_password)) {
+      ErrorResponse.error = "error in password or email";
+      return ErrorResponse;
     }
 
-    if (!this.isValidPassword(data.password, userResponse.data.hash_password)) {
-      return ResponseCreatior.CreateErrorResponse<UserLoginResponse>(
-        "error in password or email",
-      );
-    }
     let email = data.email;
     const token = jwt.sign({ email }, process.env.JWT_SECRET);
     const res = ResponseCreatior.CreateSuccsesResponse<UserLoginResponse>(
@@ -61,24 +57,36 @@ export default class UserBL {
   public async register(
     data: UserRegisterInput,
   ): Promise<IResult<UserRegisterResponse>> {
-
-    try 
-    {
+    try {
       let userResponse = await this.userDal.getUserByEmail(data.email);
-      if(!userResponse.isSuccses){
+      if (!userResponse.isSuccses) {
         return ResponseCreatior.CreateErrorResponse<UserRegisterResponse>(
           userResponse.error,
         );
-
-
       }
-    }
-     catch 
-     {
+      if (userResponse.data != null) {
+        return ResponseCreatior.CreateErrorResponse<UserRegisterResponse>(
+          "User is already exist",
+        );
+      }
 
+      const token = jwt.sign({ email: data.email }, process.env.JWT_SECRET);
+      sendEmail(data.email, token);
+
+      const regUser = await this.userDal.registerUser(data);
+      if (regUser.isSuccses && regUser.data)
+        return ResponseCreatior.CreateSuccsesResponse<UserRegisterResponse>(
+          new UserRegisterResponse(data.firstName, data.lastName),
+        );
+
+      return ResponseCreatior.CreateErrorResponse<UserRegisterResponse>(
+        regUser.error,
+      );
+    } catch (error) {
+      return ResponseCreatior.CreateErrorResponse<UserRegisterResponse>(error);
     }
-    return await this.userDal.register(data);
   }
+
   public async emailConfirmation(
     token: string,
   ): Promise<Result<UserVerificationResponse>> {

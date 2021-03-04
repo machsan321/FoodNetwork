@@ -1,10 +1,8 @@
-export class UserRegisterResponse{
-    token:string;
+export class UserRegisterResponse{ 
     firstName: string;
     lastName: string;
-
-    constructor(token: string, firstName: string, lastName: string) {
-        this.token = token;
+    constructor( firstName: string, lastName: string) {
+     
         this.firstName = firstName;
         this.lastName = lastName;
     }
