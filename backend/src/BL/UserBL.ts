@@ -1,21 +1,20 @@
-import { UserDAL } from "../DAL/UserDAL";
 import { IResult, Result } from "../common/response/Result";
 import { UserLoginResponse } from "../common/entityBL/user/UserLoginResponse";
 import { UserLoginInput } from "../common/entityBL/user/UserLoginInput";
 import { UserRegisterInput } from "../common/entityBL/user/UserRegisterInput";
 import { UserRegisterResponse } from "../common/entityBL/user/UserRegisterResponse";
 import { UserVerificationResponse } from "../common/entityBL/user/UserVerificationResponse";
-
 import { ResponseCreatior } from "../common/response/ResponseCreatior";
-import { userData } from "../common/DTO/Services/DAL/Output/userData";
 import bcrypt from "bcrypt";
 const jwt = require("jsonwebtoken");
 import { sendEmail } from "../common/helpers/nodemailer";
-export default class UserBL {
-  private userDal: UserDAL;
+import { IUserBL } from "./interfaces/IUserBL";
+import { IUserDAL } from "../DAL/interfaces/IUserDAL";
+export default class UserBL implements IUserBL {
+  private userDal: IUserDAL;
 
-  constructor() {
-    this.userDal = new UserDAL();
+  constructor(_userDAL:IUserDAL) {
+    this.userDal = _userDAL;
   }
 
   public async login(

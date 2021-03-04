@@ -4,15 +4,16 @@ import IControllerBase from "./interfaces/IControllerBase";
 import UserBL from "../BL/UserBL";
 import { UserLoginInput } from "../common/entityBL/user/UserLoginInput";
 import { UserRegisterInput } from "../common/entityBL/user/UserRegisterInput";
+import { IUserBL } from "../BL/interfaces/IUserBL";
 
 
 class UserController implements IControllerBase {
   public path = "/";
   public router = express.Router();
-  private userBL: UserBL;
+  private userBL: IUserBL;
 
-  constructor() {
-    this.userBL = new UserBL();
+  constructor(_userBL:IUserBL) {
+    this.userBL = _userBL;
     this.initRoutes();
   }
 
