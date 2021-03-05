@@ -1,17 +1,11 @@
 import User from "./models/UserSchema";
 import { IResult, Result } from "../common/response/Result";
-import { UserLoginResponse } from "../common/entityBL/user/UserLoginResponse";
-import { UserLoginInput } from "../common/entityBL/user/UserLoginInput";
-import { UserRegisterResponse } from "../common/entityBL/user/UserRegisterResponse";
-import { UserRegisterInput } from "../common/entityBL/user/UserRegisterInput";
-import { sendEmail } from "../common/helpers/nodemailer";
+import { UserRegisterInput } from "../common/DTO/Services/BL/Input/UserRegisterInput";
 import { UserVerificationResponse } from "../common/entityBL/user/UserVerificationResponse";
 import bcrypt from "bcrypt";
 import { ResponseCreatior } from "../common/response/./ResponseCreatior";
-
 import { userData } from "../common/DTO/Services/DAL/Output/userData";
 const jwt = require("jsonwebtoken");
-
 
 export class UserDAL {
 

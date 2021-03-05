@@ -1,7 +1,7 @@
 import { IResult, Result } from "../common/response/Result";
-import { UserLoginResponse } from "../common/entityBL/user/UserLoginResponse";
-import { UserLoginInput } from "../common/entityBL/user/UserLoginInput";
-import { UserRegisterInput } from "../common/entityBL/user/UserRegisterInput";
+import { UserLoginResponse } from "../common/DTO/Services/BL/Output/UserLoginResponse";
+import { UserLoginInput } from "../common/DTO/Services/BL/Input/UserLoginInput";
+import { UserRegisterInput } from "../common/DTO/Services/BL/Input/UserRegisterInput";
 import { UserRegisterResponse } from "../common/entityBL/user/UserRegisterResponse";
 import { UserVerificationResponse } from "../common/entityBL/user/UserVerificationResponse";
 import { ResponseCreatior } from "../common/response/ResponseCreatior";

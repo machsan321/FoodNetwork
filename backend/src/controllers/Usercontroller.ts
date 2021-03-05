@@ -2,8 +2,8 @@ import * as express from "express";
 import { Request, Response } from "express";
 import IControllerBase from "./interfaces/IControllerBase";
 import UserBL from "../BL/UserBL";
-import { UserLoginInput } from "../common/entityBL/user/UserLoginInput";
-import { UserRegisterInput } from "../common/entityBL/user/UserRegisterInput";
+import { UserLoginInput } from "../common/DTO/Services/BL/Input/UserLoginInput";
+import { UserRegisterInput } from "../common/DTO/Services/BL/Input/UserRegisterInput";
 import { IUserBL } from "../BL/interfaces/IUserBL";
 
 
