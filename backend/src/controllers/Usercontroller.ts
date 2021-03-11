@@ -25,7 +25,6 @@ class UserController implements IControllerBase {
 
   login = async (req: Request, res: Response) => {
     const data = await this.userBL.login(new UserLoginInput(req.body.email, req.body.password));
-   
     return res.status(200).json({ data });
   }
 

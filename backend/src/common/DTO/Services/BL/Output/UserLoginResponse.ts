@@ -8,4 +8,4 @@ export class UserLoginResponse{
          this.firstName = firstName;
          this.lastName = lastName;
      }
-}
+} 

@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-const ingredientScehma = new mongoose.Schema({
+const recipeIngredientScehma = new mongoose.Schema({
   name: {
     type: String,
     unique: true,
@@ -8,16 +8,16 @@ const ingredientScehma = new mongoose.Schema({
   },
   calKg: {
     type: Number,
-    trim: true
+    trim: true,
   },
   calnumItems: {
     type: Number,
-    trim: true
+    trim: true,
   },
   amount: {
     type: Number,
-    trim: true
+    trim: true,
   },
 });
 
-export default mongoose.model("ingredients", ingredientScehma);
+export default mongoose.model("recipe", recipeIngredientScehma);

@@ -1,5 +1,5 @@
 import mongoose, { Schema } from 'mongoose';
-import FoodIngredients from './FoodIngredient';
+import RecipeIngredient from './RecipeIngredient';
 import Iingredient from "../../common/interfaces/Iingredient";
 
 const cartSchema = new mongoose.Schema({

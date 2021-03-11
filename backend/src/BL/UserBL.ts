@@ -5,11 +5,13 @@ import { UserRegisterInput } from "../common/DTO/Services/BL/Input/UserRegisterI
 import { UserRegisterResponse } from "../common/entityBL/user/UserRegisterResponse";
 import { UserVerificationResponse } from "../common/entityBL/user/UserVerificationResponse";
 import { ResponseCreatior } from "../common/response/ResponseCreatior";
-import bcrypt from "bcrypt";
-const jwt = require("jsonwebtoken");
 import { sendEmail } from "../common/helpers/nodemailer";
 import { IUserBL } from "./interfaces/IUserBL";
 import { IUserDAL } from "../DAL/interfaces/IUserDAL";
+import bcrypt from "bcrypt";
+const jwt = require("jsonwebtoken");
+
+
 export default class UserBL implements IUserBL {
   private userDal: IUserDAL;
 
