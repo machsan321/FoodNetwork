@@ -1,22 +1,16 @@
-import mongoose from "mongoose";
+import mongoose, { Schema } from "mongoose";
 
 const recipeIngredientScehma = new mongoose.Schema({
   name: {
-    type: String,
-    unique: true,
-    required: true,
-  },
-  calKg: {
-    type: Number,
-    trim: true,
-  },
-  calnumItems: {
-    type: Number,
-    trim: true,
+    type: Schema.Types.ObjectId,
+    ref: "ingredients",
   },
   amount: {
     type: Number,
     trim: true,
+  },
+  comment: {
+    type: String,
   },
 });
 

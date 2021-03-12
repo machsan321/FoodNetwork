@@ -13,18 +13,13 @@ const ingredientsSchema = new mongoose.Schema({
       required: true,
     },
   },
-  calKg: {
-    type: Number,
-    trim: true,
+  picture: {
+    type: String,
+    required: true,
   },
-  calnumItems: {
-    type: Number,
-    trim: true,
-  },
-  amount: {
-    type: Number,
-    trim: true,
+  calories: {
+    type: Number
   },
 });
 
-export default mongoose.model("ingredients", ingredientsScehma);
+export default mongoose.model("ingredients", ingredientsSchema);
